@@ -96,6 +96,11 @@ function convertXMLToGeoJSON(xml: string): any {
           const quayLat = parseFloat(quay.Centroid?.Location?.Latitude ?? 0);
           const quayLon = parseFloat(quay.Centroid?.Location?.Longitude ?? 0);
 
+          let pvcode = "0";
+          if (quay.PrivateCode && quay.PrivateCode["#text"]) {
+            pvcode = `${quay.PrivateCode["#text"]}`;
+          }
+
           if (quayLat && quayLon) {
             features.push({
               type: "Feature",
@@ -105,13 +110,12 @@ function convertXMLToGeoJSON(xml: string): any {
               },
               tippecanoe: {
                 layer: "quays",
-                minzoom: 13,
+                minzoom: 14,
               },
               properties: {
                 type: "Quay",
                 id: quay.id,
-                name:
-                  typeof quay.Name === "string" ? quay.Name : quay.Name?.value,
+                name: pvcode,
                 parentStopPlaceId: place.id,
                 parentStopPlaceName:
                   typeof place.Name === "string"

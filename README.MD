@@ -1,8 +1,10 @@
 # Stops to tiles
 
-Tool for creating stop tiles.
+Tool for creating stop tiles from netex data
 
-tested on: node v22.12.0
-run: npx ts-node src/index.ts -i input.zip -o output.geojson
-ex:
-npx ts-node src/index.ts -i 55_Troms_latest.zip -o output.geojson -m stops.mbtiles
+Usage:
+php src/index.php --input Current_latest.zip --output latest.geojson --mbtiles stops.mbtiles
+
+# External dependencies
+
+https://github.com/mapbox/tippecanoe

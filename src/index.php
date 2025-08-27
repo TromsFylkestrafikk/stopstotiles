@@ -8,11 +8,11 @@
 $options = getopt("i:o:m:", ["input:", "output:", "mbtiles:"]);
 
 if (!isset($options['i']) && !isset($options['input'])) {
-    fwrite(STDERR, "❌ Missing required --input argument\n");
+    fwrite(STDERR, "ERROR: Missing required --input argument\n");
     exit(1);
 }
 if (!isset($options['o']) && !isset($options['output'])) {
-    fwrite(STDERR, "❌ Missing required --output argument\n");
+    fwrite(STDERR, "ERROR: Missing required --output argument\n");
     exit(1);
 }
 
@@ -165,7 +165,7 @@ function runTippecanoe(string $geojsonPath, string $mbtilesPath): void
     $cmd = sprintf("tippecanoe -o %s %s 2>&1", escapeshellarg($mbtilesPath), escapeshellarg($geojsonPath));
     passthru($cmd, $exitCode);
     if ($exitCode === 0) {
-        echo "✅ Tippecanoe finished. MBTiles written to {$mbtilesPath}\n";
+        echo "OK: Tippecanoe finished. MBTiles written to {$mbtilesPath}\n";
     } else {
         throw new RuntimeException("tippecanoe exited with code {$exitCode}");
     }
@@ -188,7 +188,7 @@ try {
         echo "\rProcessed {$processed}/{$fileCount} XML files ({$progress}%)";
     }
 
-    echo "\n✅ Parsed " . count($allFeatures) . " features total.\n";
+    echo "\nOK: Parsed " . count($allFeatures) . " features total.\n";
 
     $geojson = [
         "type" => "FeatureCollection",
@@ -196,12 +196,12 @@ try {
     ];
 
     writeGeoJSONToFile($geojson, $outputPath);
-    echo "✅ GeoJSON written to {$outputPath}\n";
+    echo "OK: GeoJSON written to {$outputPath}\n";
 
     if ($mbtiles) {
         runTippecanoe($outputPath, $mbtiles);
     }
 } catch (Throwable $e) {
-    fwrite(STDERR, "❌ Error: " . $e->getMessage() . "\n");
+    fwrite(STDERR, "ERROR: Error: " . $e->getMessage() . "\n");
     exit(1);
 }

@@ -4,7 +4,7 @@ Tool for creating stop tiles from netex data
 
 Usage:
 
-php src/index.php --input <input.zip> --output <geojsonfile> --mbtiles <outputmbtilesfile>
+php src/index.php --input <input.zip> --output <output.gejson> --mbtiles <output.mbtiles>
 
 Example:
 php src/index.php --input Current_latest.zip --output latest.geojson --mbtiles stops.mbtiles

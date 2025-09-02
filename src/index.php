@@ -74,12 +74,28 @@ function convertXMLToFeatures(string $xml): array
         $attrs = $place->attributes();
         $id = (string)($attrs['id'] ?? '');
 
+        $isParent = null;
+        $keyList = $place->children($ns['n'])->keyList ?? null;
+        if ($keyList) {
+            foreach ($keyList->KeyValue as $kv) {
+                $keyName = (string)($kv->Key ?? '');
+                $val     = strtolower((string)($kv->Value ?? ''));
+                if ($keyName === "IS_PARENT_STOP_PLACE") {
+                    $isParent = ($val === "true");
+                }
+            }
+        }
+
+        // Skip if IS_PARENT_STOP_PLACE is true
+        if ($isParent === true) {
+            continue;
+        }
+
         $centroid = $place->children($ns['n'])->Centroid->children($ns['n'])->Location;
         $stopLat = (float)($centroid->children($ns['n'])->Latitude ?? 0);
         $stopLon = (float)($centroid->children($ns['n'])->Longitude ?? 0);
-
+        $stopPlaceType = (string)$place->children($ns['n'])->StopPlaceType;
         if ($stopLat && $stopLon) {
-            $stopPlaceType = (string)$place->children($ns['n'])->StopPlaceType;
             $minzoom = ($stopPlaceType === "onstreetBus") ? 12 : 8;
 
             $features[] = [

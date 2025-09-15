@@ -226,6 +226,9 @@ class Converter
                 $allFeatures[] = $f;
             }
 
+            // Probably useless. Looks like nothing gets printed until the script ends.
+            // Might be because we only parse one xml file, even though the functionality
+            // supports multiple xml-files in zip.
             $done++;
             $progress = floor(($done / $total) * 100);
             echo "\rProcessed {$done}/{$total} XML files ({$progress}%)";

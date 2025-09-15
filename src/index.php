@@ -15,6 +15,8 @@ class ZipExtractor
             throw new RuntimeException("Cannot open ZIP: $zipFilePath");
         }
 
+        // Not sure if there can be multiple XML files in a NeTEx ZIP,
+        // All zips for Norway seems to contain just one.
         $xmlFiles = [];
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $name = $zip->getNameIndex($i);
@@ -38,6 +40,8 @@ class NetexParser
 
     public function __construct()
     {
+        // We use this instead of layering different stop types in vectorfiles
+        // to avoid cluttering the map with too many layers.
         $grouped = [
             "train"      => ["railStation", "onstreetTram", "metroStation"],
             "bus"        => ["onstreetBus", "busStation"],
@@ -150,6 +154,9 @@ class NetexParser
         $lat = (float)($centroid->children($this->ns['n'])->Latitude ?? 0);
         $lon = (float)($centroid->children($this->ns['n'])->Longitude ?? 0);
 
+        // Private code should probably be removed, not meant for public display
+        // but it's the only "name-like" field available in Quay.
+        // Though we have decied to not show name/number of quay as far as I know
         $pvcode = (string)($quay->children($this->ns['n'])->PrivateCode ?? "0");
 
         if (!$lat || !$lon) return [];
@@ -161,7 +168,7 @@ class NetexParser
             "properties" => [
                 "type" => "Quay",
                 "id"   => $id,
-                "name" => $pvcode,
+                "name" => $pvcode,  // Using PrivateCode as name, but should it be shown? No..
                 "parentStopPlaceId" => $parentId,
             ],
         ]];
@@ -182,6 +189,7 @@ class GeoJSONWriter
 
 class TippecanoeRunner
 {
+    //General Tippecanoe options could be added here if needed (especially --force to overwrite an existing mbtiles file)
     public static function run(string $geojsonPath, string $mbtilesPath): void
     {
         echo "⚙️ Running tippecanoe to generate {$mbtilesPath} ...\n";

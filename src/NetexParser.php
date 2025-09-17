@@ -29,9 +29,9 @@ class NetexParser
         ];
 
         $groupedLayers = [
-            "major" => ["railStation", "harbourPort", "airport"],
-            "medium" => ["liftStation", "ferryStop", "metroStation", "busStation", "taxiStand"],
-            "minor" => ["onstreetTram", "onstreetBus", "taxiStand"]
+            "major"     => ["harbourPort", "airport"],
+            "medium"    => ["railStation", "liftStation", "ferryStop", "metroStation", "busStation", "taxiStand"],
+            "minor"     => ["onstreetTram", "onstreetBus", "taxiStand"]
         ];
 
         $this->categories = array_merge(

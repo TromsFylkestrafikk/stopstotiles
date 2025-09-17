@@ -43,12 +43,12 @@ class NetexParser
         // We use this instead of layering different stop types in vectorfiles
         // to avoid cluttering the map with too many layers.
         $grouped = [
-            "train"      => ["railStation", "onstreetTram", "metroStation"],
-            "bus"        => ["onstreetBus", "busStation"],
-            "water"      => ["harbourPort", "ferryStop"],
-            "liftStation" => ["liftStation"],
-            "airport"    => ["airport"],
-            "taxiStand"  => ["taxiStand"]
+            "train"         => ["railStation", "onstreetTram", "metroStation"],
+            "bus"           => ["onstreetBus", "busStation"],
+            "water"         => ["harbourPort", "ferryStop"],
+            "liftStation"   => ["liftStation"],
+            "airport"       => ["airport"],
+            "taxiStand"     => ["taxiStand"]
         ];
 
         $this->categories = array_merge(

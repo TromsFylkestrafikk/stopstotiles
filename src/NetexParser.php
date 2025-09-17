@@ -9,6 +9,13 @@ class NetexParser
 {
     private array $ns = ["n" => "http://www.netex.org.uk/netex"];
     private array $categories = [];
+    private array $layers = [];
+    private array $layerMinZoom = [
+        "major" => 8,
+        "medium" => 10,
+        "minor" => 12,
+        "quays" => 14
+    ];
 
     public function __construct()
     {
@@ -21,11 +28,25 @@ class NetexParser
             "taxiStand"     => ["taxiStand"]
         ];
 
+        $groupedLayers = [
+            "major" => ["railStation", "harbourPort", "airport"],
+            "medium" => ["liftStation", "ferryStop", "metroStation", "busStation", "taxiStand"],
+            "minor" => ["onstreetTram", "onstreetBus", "taxiStand"]
+        ];
+
         $this->categories = array_merge(
             ...array_map(
                 fn($category, $items) => array_fill_keys($items, $category),
                 array_keys($grouped),
                 $grouped
+            )
+        );
+
+        $this->layers = array_merge(
+            ...array_map(
+                fn($layer, $items) => array_fill_keys($items, $layer),
+                array_keys($groupedLayers),
+                $groupedLayers
             )
         );
     }
@@ -89,13 +110,15 @@ class NetexParser
         $lon = (float)($centroid->children($this->ns['n'])->Longitude ?? 0);
         $type = (string)$place->children($this->ns['n'])->StopPlaceType;
         $stopPlaceCategory = $this->categories[$type] ?? "other";
+        $stopPlaceLayer = $this->layers[$type] ?? "minor";
 
         if ($lat && $lon) {
-            $minzoom = ($type === "onstreetBus") ? 12 : 8;
+            // Magic numer 12 = default zoom
+            $minzoom = $this->layerMinZoom[$stopPlaceLayer] ?? 12;
             $features[] = [
                 "type" => "Feature",
                 "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
-                "tippecanoe" => ["layer" => "stops", "minzoom" => $minzoom],
+                "tippecanoe" => ["layer" => $stopPlaceLayer, "minzoom" => $minzoom],
                 "properties" => [
                     "type" => "StopPlace",
                     "id"   => $id,
@@ -134,7 +157,7 @@ class NetexParser
         return [[
             "type" => "Feature",
             "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
-            "tippecanoe" => ["layer" => "quays", "minzoom" => 14],
+            "tippecanoe" => ["layer" => "quays", "minzoom" => $this->layerMinZoom['quays']],
             "properties" => [
                 "type" => "Quay",
                 "id"   => $id,

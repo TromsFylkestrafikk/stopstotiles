@@ -111,6 +111,7 @@ class NetexParser
         $type = (string)$place->children($this->ns['n'])->StopPlaceType;
         $stopPlaceCategory = $this->categories[$type] ?? "other";
         $stopPlaceLayer = $this->layers[$type] ?? "minor";
+        $transportMode = (string)$place->children($this->ns['n'])->TransportMode;
 
         if ($lat && $lon) {
             // Magic numer 12 = default zoom
@@ -123,6 +124,7 @@ class NetexParser
                     "type" => "StopPlace",
                     "id"   => $id,
                     "name" => (string)$place->children($this->ns['n'])->Name,
+                    "transportMode" => $transportMode,
                     "stopPlaceType" => $type,
                     "stopPlaceCategory" => $stopPlaceCategory,
                 ],

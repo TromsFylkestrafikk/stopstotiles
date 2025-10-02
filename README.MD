@@ -17,6 +17,12 @@ local files and remote URLs
 php convert.php --input <input.zip> --output <output.gejson> --mbtiles <output.mbtiles>
 ```
 
+**Example**
+
+```bash
+php convert.php --input https://storage.googleapis.com/marduk-production/tiamat/Current_latest.zip --output latest.geojson --mbtiles stops.mbtiles --force
+```
+
 ### With config file
 
 Create a `config.json`

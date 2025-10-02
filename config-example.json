@@ -1,0 +1,7 @@
+{
+  "input": "https://example.com/netex/stops.zip",
+  "output": "stops.geojson",
+  "mbtiles": "stops.mbtiles",
+  "force": true,
+  "retries": 5
+}

@@ -6,11 +6,12 @@ use RuntimeException;
 
 class TippecanoeRunner
 {
-    public static function run(string $geojsonPath, string $mbtilesPath): void
+    public static function run(string $geojsonPath, string $mbtilesPath, bool $force = false): void
     {
         echo "⚙️ Running tippecanoe to generate {$mbtilesPath} ...\n";
         $cmd = sprintf(
-            "tippecanoe -o %s %s 2>&1",
+            "tippecanoe %s -o %s %s 2>&1",
+            $force ? "--force" : "",
             escapeshellarg($mbtilesPath),
             escapeshellarg($geojsonPath)
         );

@@ -40,11 +40,11 @@ class Converter
             echo "\rProcessed {$done}/{$total} XML files ({$progress}%)";
         }
 
-        echo "\n✅ Parsed " . count($allFeatures) . " features total.\n";
+        echo "\nParsed " . count($allFeatures) . " features total.\n";
 
         $geojson = ["type" => "FeatureCollection", "features" => $allFeatures];
         GeoJSONWriter::write($geojson, $this->outputPath);
-        echo "✅ GeoJSON written to {$this->outputPath}\n";
+        echo "GeoJSON written to {$this->outputPath}\n";
 
         if ($this->mbtiles) {
             TippecanoeRunner::run($this->outputPath, $this->mbtiles, $this->force);

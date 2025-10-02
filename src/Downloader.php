@@ -22,7 +22,7 @@ class Downloader
 
         while ($attempt < $retries) {
             $attempt++;
-            echo "⬇️ Downloading input from $url (attempt $attempt/$retries)...\n";
+            echo "Downloading input from $url (attempt $attempt/$retries)...\n";
 
             $tmpFile = tempnam(sys_get_temp_dir(), "netex_") . ".zip";
             $fp = fopen($tmpFile, 'w+');
@@ -50,17 +50,17 @@ class Downloader
             fclose($fp);
 
             if ($success && $status < 400) {
-                echo "✅ OK: Downloaded to $tmpFile\n";
+                echo "OK: Downloaded to $tmpFile\n";
                 return $tmpFile;
             }
 
             // Cleanup failed attempt
             unlink($tmpFile);
 
-            echo "⚠️ Download failed (HTTP $status - $error)\n";
+            echo "Download failed (HTTP $status - $error)\n";
 
             if ($attempt < $retries) {
-                echo "⏳ Retrying in {$delay}s...\n";
+                echo "Retrying in {$delay}s...\n";
                 sleep($delay);
             }
         }

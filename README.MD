@@ -57,6 +57,50 @@ Use Current stops for spesific region or the one for Entire Norway.
 - Entire norway https://storage.googleapis.com/marduk-production/tiamat/Current_latest.zip
 - Troms https://storage.googleapis.com/marduk-production/tiamat/55_Troms_latest.zip
 
+## Example output
+
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [10.7461, 59.9127]
+      },
+      "tippecanoe": {
+        "layer": "stops",
+        "minzoom": 12
+      },
+      "properties": {
+        "type": "StopPlace",
+        "id": "NSR:StopPlace:1234",
+        "name": "Jernbanetorget",
+        "stopPlaceType": "onstreetBus",
+        "stopPlaceCategory": "bus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [10.747, 59.9129]
+      },
+      "tippecanoe": {
+        "layer": "quays",
+        "minzoom": 14
+      },
+      "properties": {
+        "type": "Quay",
+        "id": "NSR:Quay:5678",
+        "parentStopPlaceId": "NSR:StopPlace:1234"
+      }
+    }
+  ]
+}
+```
+
 ## Requirements
 
 - PHP 8.1+ with `zip` and `curl` extensions enabled

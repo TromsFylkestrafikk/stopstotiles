@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ZIP_URL="https://storage.googleapis.com/marduk-production/tiamat/Current_latest.zip"
+ZIP_URL="https://example.com/path/to/stops.xml.zip"
 ZIP_FILE="/tmp/stops.zip"
 OUTPUT_GEOJSON="stops.geojson"
 OUTPUT_MBTILES="stops.mbtiles"

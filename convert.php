@@ -5,7 +5,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use App\Converter;
 
-$options = getopt("i:o:m:", ["input:", "output:", "mbtiles:"]);
+$options = getopt("i:o:m:", ["input:", "output:", "mbtiles:", "force"]);
 
 if (!isset($options['i']) && !isset($options['input'])) {
     fwrite(STDERR, "ERROR: Missing required --input argument\n");
@@ -19,9 +19,10 @@ if (!isset($options['o']) && !isset($options['output'])) {
 $zipPath    = $options['i'] ?? $options['input'];
 $outputPath = $options['o'] ?? $options['output'];
 $mbtiles    = $options['m'] ?? ($options['mbtiles'] ?? null);
+$force      = isset($options['f']) || isset($options['force']);
 
 try {
-    (new Converter($zipPath, $outputPath, $mbtiles))->run();
+    (new Converter($zipPath, $outputPath, $mbtiles, $force))->run();
 } catch (Throwable $e) {
     fwrite(STDERR, "ERROR: " . $e->getMessage() . "\n");
     exit(1);

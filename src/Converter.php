@@ -7,12 +7,14 @@ class Converter
     private string $zipPath;
     private string $outputPath;
     private ?string $mbtiles;
+    private bool $force;
 
-    public function __construct(string $zipPath, string $outputPath, ?string $mbtiles)
+    public function __construct(string $zipPath, string $outputPath, ?string $mbtiles, bool $force)
     {
         $this->zipPath = $zipPath;
         $this->outputPath = $outputPath;
         $this->mbtiles = $mbtiles;
+        $this->force = $force;
     }
 
     public function run(): void
@@ -42,7 +44,7 @@ class Converter
         echo "OK: GeoJSON written to {$this->outputPath}\n";
 
         if ($this->mbtiles) {
-            TippecanoeRunner::run($this->outputPath, $this->mbtiles);
+            TippecanoeRunner::run($this->outputPath, $this->mbtiles, $this->force);
         }
     }
 }

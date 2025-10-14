@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+cd $(dirname $0)
+
+set -e
 source .env
 
-PHP_CONVERTER="php convert.php"
-
+PHP_CONVERTER="php ./convert.php"
 download_file() {
     curl -L -o "$2" "$1" || { echo "Download failed!"; exit 1; }
 }
@@ -14,9 +16,13 @@ run_converter() {
         cmd="$cmd --mbtiles $3"
         $FORCE_MB && cmd="$cmd --force"
     fi
-    $cmd || { echo "Conversion failed!"; exit 1; }
+    $cmd
 }
 
 download_file "$ZIP_URL" "$ZIP_FILE"
 run_converter "$ZIP_FILE" "$OUTPUT_GEOJSON" "$OUTPUT_MBTILES"
-#sudo service martin restart
+
+if [[ $((DELETE_INTERIM)) > 0 ]]; then
+    rm -f $ZIP_FILE
+    rm -f $OUTPUT_GEOJSON
+fi

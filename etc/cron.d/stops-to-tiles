@@ -1,3 +1,14 @@
 # Example cron.d config for copying generated stop tiles to tile server.
 
-30 5 * * * www-data /path/to/stopstotiles/update-stop-tiles.sh && systemctl restart martin
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+SHELL=/usr/bin/bash
+
+S2T_HOME=/path/to/stopstotiles
+# RUNAS=www-data
+
+# System services need to be restarted by root-ish users.
+30 5 * * * root $S2T_HOME/update-stop-tiles.sh && systemctl restart martin
+
+# Set this if running as configured user. This does not require elevated
+# privileges.
+#30 5 * * * $RUN_AS $S2T_HOME/update-stop-tiles.sh

@@ -1,0 +1,3 @@
+# Example cron.d config for copying generated stop tiles to tile server.
+
+30 5 * * * www-data /path/to/stopstotiles/update-stop-tiles.sh && systemctl restart martin

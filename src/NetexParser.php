@@ -119,7 +119,7 @@ class NetexParser
         // Magic numer 12 = default zoom
         $minzoom = $this->layerMinZoom[$stopPlaceLayer] ?? 12;
         $stopProperties = [
-            "type" => "StopPlace",
+            "type" => "stopPlace",
             "id"   => $id,
             "name" => (string)$place->children($this->ns['n'])->Name,
             "transportMode" => $transportMode,
@@ -153,7 +153,9 @@ class NetexParser
         $centroid = $quay->children($this->ns['n'])->Centroid->children($this->ns['n'])->Location;
         $lat = (float)($centroid->children($this->ns['n'])->Latitude ?? 0);
         $lon = (float)($centroid->children($this->ns['n'])->Longitude ?? 0);
-        // $publicCode = (string) $quay->children($this->ns['n'])->Centroid->children($this->ns['n'])->Location
+        $publicCode = (string)$quay->children($this->ns['n'])->PublicCode;
+        $privateCode = (string)$quay->children($this->ns['n'])->PrivateCode;
+        $compassBearing = (float)$quay->children($this->ns['n'])->CompassBearing;
 
         if (!$lat || !$lon) {
             return [];
@@ -164,8 +166,11 @@ class NetexParser
             "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
             "tippecanoe" => ["layer" => "quays", "minzoom" => $this->layerMinZoom['quays']],
             "properties" => [
-                "type" => "Quay",
+                "type" => "quay",
                 "id"   => $id,
+                "publicCode" => $publicCode,
+                "privateCode" => $privateCode,
+                "compassBearing" => $compassBearing,
                 "parentStopPlaceId" => $stopProperties["id"],
                 "transportMode" => $stopProperties["transportMode"],
                 "stopPlaceType" => $stopProperties["stopPlaceType"],

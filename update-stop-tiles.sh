@@ -9,8 +9,12 @@ ZIP_FILE="./build/stops.zip"
 OUTPUT_GEOJSON="./build/stops.geojson"
 OUTPUT_MBTILES="./build/stops.mbtiles"
 FORCE_MB=1
+FORCE_DL=0
 TARGET_MBTILE=""
 DELETE_INTERIM=0
+# Don't download zip file if it's more recent than these many seconds.
+# 60 * 60 * 8 = 28800
+MIN_AGE=28800
 
 cd $(dirname $0)
 set -e
@@ -20,7 +24,12 @@ fi
 
 PHP_CONVERTER="./convert.php"
 download_file() {
-    curl -L -o "$2" "$1" || { echo "Download failed!"; exit 1; }
+    if [[ ! -f $ZIP_FILE ]] ||
+       [[ $FORCE_DL -gt 0 ]] ||
+       [[ $(($(date +%s) - $(date -r $ZIP_FILE +%s))) -gt $MIN_AGE ]]
+    then
+        curl -L -o "$2" "$1"
+    fi
 }
 
 run_converter() {

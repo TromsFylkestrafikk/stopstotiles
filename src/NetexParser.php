@@ -113,28 +113,30 @@ class NetexParser
         $stopPlaceLayer = $this->layers[$type] ?? "minor";
         $transportMode = (string)$place->children($this->ns['n'])->TransportMode;
 
-        if ($lat && $lon) {
-            // Magic numer 12 = default zoom
-            $minzoom = $this->layerMinZoom[$stopPlaceLayer] ?? 12;
-            $features[] = [
-                "type" => "Feature",
-                "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
-                "tippecanoe" => ["layer" => $stopPlaceLayer, "minzoom" => $minzoom],
-                "properties" => [
-                    "type" => "StopPlace",
-                    "id"   => $id,
-                    "name" => (string)$place->children($this->ns['n'])->Name,
-                    "transportMode" => $transportMode,
-                    "stopPlaceType" => $type,
-                    "stopPlaceCategory" => $stopPlaceCategory,
-                ],
-            ];
+        if (!$lat || !$lon) {
+            return [];
         }
+        // Magic numer 12 = default zoom
+        $minzoom = $this->layerMinZoom[$stopPlaceLayer] ?? 12;
+        $stopProperties = [
+            "type" => "stopPlace",
+            "id"   => $id,
+            "name" => (string)$place->children($this->ns['n'])->Name,
+            "transportMode" => $transportMode,
+            "stopPlaceType" => $type,
+            "stopPlaceCategory" => $stopPlaceCategory,
+        ];
+        $features[] = [
+            "type" => "Feature",
+            "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
+            "tippecanoe" => ["layer" => $stopPlaceLayer, "minzoom" => $minzoom],
+            "properties" => $stopProperties,
+        ];
 
         $quaysNode = $place->children($this->ns['n'])->quays ?? null;
         if ($quaysNode) {
             foreach ($quaysNode->children($this->ns['n'])->Quay ?? [] as $quay) {
-                foreach ($this->parseQuay($quay, $id) as $qf) {
+                foreach ($this->parseQuay($quay, $stopProperties) as $qf) {
                     $features[] = $qf;
                 }
             }
@@ -143,7 +145,7 @@ class NetexParser
         return $features;
     }
 
-    private function parseQuay(SimpleXMLElement $quay, string $parentId): array
+    private function parseQuay(SimpleXMLElement $quay, array $stopProperties = []): array
     {
         $attrs = $quay->attributes();
         $id = (string)($attrs['id'] ?? '');
@@ -151,6 +153,9 @@ class NetexParser
         $centroid = $quay->children($this->ns['n'])->Centroid->children($this->ns['n'])->Location;
         $lat = (float)($centroid->children($this->ns['n'])->Latitude ?? 0);
         $lon = (float)($centroid->children($this->ns['n'])->Longitude ?? 0);
+        $publicCode = (string)$quay->children($this->ns['n'])->PublicCode;
+        $privateCode = (string)$quay->children($this->ns['n'])->PrivateCode;
+        $compassBearing = (float)$quay->children($this->ns['n'])->CompassBearing;
 
         if (!$lat || !$lon) {
             return [];
@@ -161,9 +166,15 @@ class NetexParser
             "geometry" => ["type" => "Point", "coordinates" => [$lon, $lat]],
             "tippecanoe" => ["layer" => "quays", "minzoom" => $this->layerMinZoom['quays']],
             "properties" => [
-                "type" => "Quay",
+                "type" => "quay",
                 "id"   => $id,
-                "parentStopPlaceId" => $parentId,
+                "publicCode" => $publicCode,
+                "privateCode" => $privateCode,
+                "compassBearing" => $compassBearing,
+                "parentStopPlaceId" => $stopProperties["id"],
+                "transportMode" => $stopProperties["transportMode"],
+                "stopPlaceType" => $stopProperties["stopPlaceType"],
+                "stopPlaceCategory" => $stopProperties["stopPlaceCategory"],
             ],
         ]];
     }
